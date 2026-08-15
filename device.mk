@@ -36,6 +36,7 @@ PRODUCT_SOONG_NAMESPACES += \
     $(LOCAL_PATH) \
     hardware/google/interfaces \
     hardware/google/pixel \
+    hardware/lineage/interfaces/power-libperfmgr \
     vendor/qcom/opensource/usb/etc
 
 # Permissions
@@ -78,18 +79,23 @@ PRODUCT_COPY_FILES += \
 
 # Audio
 PRODUCT_PACKAGES += \
-    android.hardware.audio@7.0-impl:32 \
-    android.hardware.audio.effect@7.0-impl:32 \
     android.hardware.audio.service \
+    android.hardware.audio@7.0-impl \
+    android.hardware.audio.effect@7.0-impl \
     android.hardware.bluetooth.audio-impl \
-    audio.primary.msm8953:32 \
     audio.bluetooth.default \
+    audio.primary.msm8953 \
     audio.r_submix.default \
     audio.usb.default \
+    libaudiopreprocessing \
     libaudio-resampler \
-    libqcomvisualizer \
     libqcomvoiceprocessing \
-    libqcompostprocbundle
+    libvolumelistener \
+    libtinycompress \
+    libnetutils \
+    libnetutils.vendor \
+    libsqlite \
+    libsqlite.vendor:64
 
 # Audio configuration
 PRODUCT_COPY_FILES += \
@@ -143,19 +149,16 @@ PRODUCT_PACKAGES += \
 
 # Display
 PRODUCT_PACKAGES += \
-    android.hardware.graphics.allocator@2.0-impl:64 \
+    android.hardware.graphics.allocator@2.0-impl \
     android.hardware.graphics.allocator@2.0-service \
-    android.hardware.graphics.composer@2.1-service \
     android.hardware.graphics.mapper@2.0-impl-2.1 \
-    android.hardware.memtrack@1.0-impl \
-    android.hardware.memtrack@1.0-service \
+    android.hardware.graphics.composer@2.1-service \
+    hwcomposer.qcom \
     gralloc.msm8953 \
-    hwcomposer.msm8953 \
-    memtrack.msm8953 \
-    libqdMetaData.system \
-    libtinyxml \
-    libvulkan \
-    vendor.display.config@1.0.vendor
+    vendor.qti.hardware.memtrack-service \
+    libdisplayconfig \
+    libqdMetaData \
+    libqdMetaData.system
 
 # Device-specific settings
 PRODUCT_PACKAGES += \
@@ -172,6 +175,7 @@ PRODUCT_PACKAGES += \
 # Fingerprint
 PRODUCT_PACKAGES += \
     android.hardware.biometrics.fingerprint@2.1-service.xiaomi_oxygen \
+    liblzma.vendor \
     libshims_binder
 
 # fastbootd
@@ -224,16 +228,8 @@ PRODUCT_PACKAGES += \
     libims-shim
 
 # Input configuration
-ifneq ($(HIDE_HWKEY),true)
-PRODUCT_PACKAGES += \
-    HwKeyOverlay
-
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/hw-key/ft5x46.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/ft5x46.kl
-else
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/keylayout/ft5x46.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/ft5x46.kl
-endif
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/uinput-fpc.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/uinput-fpc.kl \
     $(LOCAL_PATH)/keylayout/uinput-goodix.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/uinput-goodix.kl
@@ -287,12 +283,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libc2dcolorconvert \
     libmm-omxcore \
-    libOmxAacEnc \
-    libOmxAmrEnc \
     libOmxCore \
-    libOmxEvrcEnc \
-    libOmxG711Enc \
-    libOmxQcelp13Enc \
     libOmxVdec \
     libOmxVenc \
     libstagefrighthw
@@ -303,7 +294,7 @@ PRODUCT_RETROFIT_DYNAMIC_PARTITIONS := true
 
 # Power
 PRODUCT_PACKAGES += \
-    android.hardware.power-service.xiaomi-msm8953-libperfmgr \
+    android.hardware.power-service.lineage-libperfmgr \
     android.hardware.power@1.2.vendor \
     android.hardware.power.stats@1.0-service.mock \
     vendor.qti.hardware.perf@2.2.vendor
@@ -346,8 +337,14 @@ PRODUCT_PACKAGES += \
     init.target.rc \
     ueventd.qcom.rc
 
+# Firmware partition mount points
+PRODUCT_PACKAGES += \
+    vendor_dsp_mountpoint \
+    vendor_firmware_mnt_mountpoint
+
 # RIL
 PRODUCT_PACKAGES += \
+    android.hardware.radio-service.compat \
     android.hardware.radio@1.5.vendor \
     android.hardware.radio.config@1.2.vendor \
     android.hardware.radio.deprecated@1.0.vendor \
@@ -374,18 +371,20 @@ PRODUCT_COPY_FILES += \
 
 # Thermal
 PRODUCT_PACKAGES += \
-    android.hardware.thermal@2.0-service.qti
+    android.hardware.thermal-service.qti
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/thermal-engine.conf:$(TARGET_COPY_OUT_VENDOR)/etc/thermal-engine.conf
 
 # Trust HAL
-PRODUCT_PACKAGES += \
+#PRODUCT_PACKAGES += \
     vendor.lineage.trust@1.0-service
 
 # USB HAL
 PRODUCT_PACKAGES += \
-    android.hardware.usb@1.0-service.basic
+    usb_compositions.conf \
+    android.hardware.usb@1.3-service.dual_role_usb \
+    android.hardware.usb.gadget-service.qti
 
 # Vibrator
 PRODUCT_PACKAGES += \
@@ -396,9 +395,10 @@ PRODUCT_COPY_FILES += \
     
 # VNDK
 PRODUCT_PACKAGES += \
-    libstdc++_vendor
+    libstdc++_vendor \
+    libhidlbase-v32.vendor
 
-PRODUCT_COPY_FILES += \
+#PRODUCT_COPY_FILES += \
     prebuilts/vndk/v32/arm64/arch-arm64-armv8-a/shared/vndk-sp/libhidlbase.so:$(TARGET_COPY_OUT_VENDOR)/lib64/libhidlbase-v32.so
 
 # Whitelisted app
@@ -408,14 +408,17 @@ PRODUCT_COPY_FILES += \
 
 # Wifi
 PRODUCT_PACKAGES += \
-    android.hardware.wifi@1.0-service.legacy \
+    android.hardware.wifi-service \
     libcld80211 \
+    libwifi-hal-ctrl \
     libwpa_client \
     hostapd \
-    libwifi-hal-qcom \
-    WifiOverlay \
+    wcnss_service \
+    wificond \
     wpa_supplicant \
-    wpa_supplicant.conf
+    wpa_supplicant.conf \
+    libnetutils \
+    libnetutils.vendor
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/wifi/p2p_supplicant_overlay.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/p2p_supplicant_overlay.conf \

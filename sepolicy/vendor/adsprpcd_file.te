@@ -1,1 +1,2 @@
+typeattribute adsprpcd_file contextmount_type;
 allow adsprpcd_file self:filesystem associate;

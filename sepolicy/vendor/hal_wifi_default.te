@@ -1,2 +1,5 @@
 allow hal_wifi_default proc_net:file rw_file_perms;
+allow hal_wifi_default wcnss_device:chr_file rw_file_perms;
+allow hal_wifi_default sysfs_net:dir r_dir_perms;
+allow hal_wifi_default sysfs_net:file r_file_perms;
 set_prop(hal_wifi_default, vendor_wifi_prop);

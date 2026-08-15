@@ -135,6 +135,7 @@ persist.vendor.delta_time.enable=true
 net.tcp.2g_init_rwnd=10
 
 # Usb
+vendor.usb.controller=7000000.dwc3
 persist.vendor.usb.config.extra=none
 
 # Wifi

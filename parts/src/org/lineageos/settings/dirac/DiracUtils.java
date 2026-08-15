@@ -50,7 +50,10 @@ public final class DiracUtils {
     }
 
     public void onBootCompleted() {
-            mInstance = this;
+        setEnabled(mDiracSound.getMusic() == 1);
+        mDiracSound.setHeadsetType(mDiracSound.getHeadsetType());
+        setLevel(getLevel());
+        mInstance = this;
     }
 
     protected void refreshPlaybackIfNecessary(){
@@ -113,7 +116,7 @@ public final class DiracUtils {
     protected void setEnabled(boolean enable) {
         mDiracSound.setEnabled(enable);
         mDiracSound.setMusic(enable ? 1 : 0);
-	if (enable) {
+        if (enable) {
             refreshPlaybackIfNecessary();
         }
     }
@@ -128,6 +131,16 @@ public final class DiracUtils {
         for (int band = 0; band <= level.length - 1; band++) {
             mDiracSound.setLevel(band, Float.valueOf(level[band]));
         }
+    }
+
+    protected String getLevel() {
+        String selected = "";
+        for (int band = 0; band <= 6; band++) {
+            int temp = (int) mDiracSound.getLevel(band);
+            selected += String.valueOf(temp);
+            if (band != 6) selected += ",";
+        }
+        return selected;
     }
 
     protected void setHeadsetType(int paramInt) {
