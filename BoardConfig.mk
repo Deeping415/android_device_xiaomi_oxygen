@@ -6,6 +6,9 @@
 
 DEVICE_PATH := device/xiaomi/oxygen
 
+# A/B
+AB_OTA_UPDATER := false
+
 # Architecture
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
@@ -22,6 +25,7 @@ TARGET_2ND_CPU_VARIANT := generic
 TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a53
 
 # Build
+BUILD_BROKEN_DUP_RULES := true
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 
 # Device Properties
@@ -29,6 +33,9 @@ TARGET_ODM_PROP := $(DEVICE_PATH)/odm.prop
 TARGET_SYSTEM_PROP := $(DEVICE_PATH)/system.prop
 TARGET_SYSTEM_EXT_PROP := $(DEVICE_PATH)/system_ext.prop
 TARGET_VENDOR_PROP := $(DEVICE_PATH)/vendor.prop
+
+# GRF/VF
+BOARD_SHIPPING_API_LEVEL := 33
 
 # Kernel
 BOARD_BOOT_HEADER_VERSION := 1
@@ -112,7 +119,7 @@ DEVICE_MATRIX_FILE := \
     $(DEVICE_PATH)/compatibility_matrix.xml
 
 # Lineage Health
-TARGET_HEALTH_CHARGING_CONTROL_CHARGING_PATH := /sys/class/power_supply/battery/charging_enabled
+$(call soong_config_set,lineage_health,charging_control_charging_path,/sys/class/power_supply/battery/charging_enabled)
 
 # Partitions
 BOARD_BOOTIMAGE_PARTITION_SIZE := 67108864
@@ -172,10 +179,10 @@ BOARD_VNDK_VERSION := current
 # Wi-Fi
 BOARD_HAS_QCOM_WLAN := true
 BOARD_HOSTAPD_DRIVER := NL80211
-BOARD_HOSTAPD_PRIVATE_LIB := lib_driver_cmd_qcwcn
+BOARD_HOSTAPD_PRIVATE_LIB := //hardware/qcom-caf/wlan/qcwcn:lib_driver_cmd_qcwcn
 BOARD_WLAN_DEVICE := qcwcn
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
-BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_qcwcn
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := //hardware/qcom-caf/wlan/qcwcn:lib_driver_cmd_qcwcn
 TARGET_HAS_BROKEN_WLAN_SET_INTERFACE := true
 WIFI_HAL_INTERFACE_COMBINATIONS := {{{STA}, 1}}
 WIFI_DRIVER_FW_PATH_AP := "ap"
@@ -188,8 +195,8 @@ WIFI_AVOID_IFACE_RESET_MAC_CHANGE := true
 WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
 WPA_SUPPLICANT_VERSION := VER_0_8_X
 
-AB_OTA_UPDATER := false
-TARGET_OTA_ALLOW_NON_AB := true
+# Android Go (Low RAM Profile)
+BOARD_USE_LOW_RAM := true
 
 # Inherit from the proprietary version
 include vendor/xiaomi/oxygen/BoardConfigVendor.mk

@@ -9,16 +9,14 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_n_mr1.mk)
 
+# Inherit Android Go defaults
+$(call inherit-product, $(SRC_TARGET_DIR)/product/go_defaults.mk)
+
 # Inherit some common LineageOS stuff.
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
 # Inherit from oxygen device.
 $(call inherit-product, device/xiaomi/oxygen/device.mk)
-
-# Disable Virtual A/B (retrofit non-A/B device)
-PRODUCT_VIRTUAL_AB_OTA := false
-PRODUCT_VIRTUAL_AB :=
-PRODUCT_VIRTUAL_AB_COW_VERSION :=
 
 # Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := oxygen
